@@ -1,4 +1,23 @@
+let rows = [];
+let columnLabels = [];
+let getDoc = (selector) => document.querySelector(selector);
+let headerRow = getDoc(`.headerRow`);
+let middleRows = getDoc(`.middleRows`);
+let footerRow = getDoc(`.footerRow`);
 let snipeITacceccoriesAPIUrl = `https://develop.snipeitapp.com/api/v1/accessories?limit=50&offset=0&order_number=null&sort=created_at&order=desc&expand=false`;
+
+let setColumnLabels = (labels, rowsToAffect) => {
+  rowsToAffect.forEach(labelRow => {
+    labelRow.innerHTML = ``;
+    labels.forEach((colLabel, colIndex) => {
+      let colDiv = document.createElement(`div`);
+      colDiv.classList.add(`headerColumn`);
+      colDiv.classList.add(`column`);
+      colDiv.innerHTML = colLabel;
+      labelRow.append(colDiv);
+    });
+  })
+}
 
 let getAccessories = async () => {
     try {
@@ -15,10 +34,37 @@ let getAccessories = async () => {
         }).then(data => {
           if (data.rows && data.rows.length > 0) {
             data.rows.forEach((acc, accIndex) => {
-              // console.log(`Accessory`, acc);
-              let { id, name, image } = acc;
-              console.log({id, name, image});
+              let { id, name, image, category, company, location, manufacturer, min_qty, qty, remaining_qty, supplier, user_can_checkout } = acc;
+
+              let customAccessoryDataForOurAPI = {
+                id, 
+                name, 
+                image, 
+                company, 
+                quantity: qty, 
+                minimum: min_qty, 
+                category: category.name, 
+                location: location.name, 
+                supplier: supplier.name,
+                remaining: remaining_qty,
+                checkout: user_can_checkout,
+                manufacturer: manufacturer.name, 
+              };
+
+              columnLabels = Object.keys(customAccessoryDataForOurAPI);
+              rows.push(customAccessoryDataForOurAPI);
+            });
+
+            middleRows.innerHTML = ``;
+            rows.sort((a,b) => a.id - b.id).forEach(row => {
+              let rowDiv = document.createElement(`div`);
+              rowDiv.classList.add(`middleRow`);
+              rowDiv.classList.add(`row`);
+              let values = Object.values(row);
+              setColumnLabels(values, [rowDiv]);
+              middleRows.append(rowDiv);
             })
+            setColumnLabels(columnLabels, [headerRow, footerRow]);
           }
           return data;
         })
