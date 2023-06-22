@@ -3,3 +3,28 @@ body {
     color: white;
     font-family: Arial, Helvetica, sans-serif;
 }
+
+.accessoriesTable {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    border: 1px solid white;
+}
+
+.headerRow, .footerRow {
+    border-width: 2px;
+}
+
+.column {
+    text-align: center;
+    border-right: 1px solid white;
+    min-width: 150px;
+}
